@@ -5,7 +5,7 @@ Representación física de una **máquina de Turing** que ejecuta **suma (A+B)**
 
 ## Idea general
 - **Controlador:** Arduino Uno que implementa la lógica de transición (leer símbolo, escribir símbolo, mover L/R, cambiar de estado).
-- **Cinta:** hilera de LEDs (LED ON = `1`, LED OFF = `␣`).
+- **Cinta:** hilera de LEDs (LED ENCENDIDO = `1`, LED APAGADO = `␣`).
 - **Cabezal:** carrito con LDR que “lee” el LED actual; la “escritura” la realiza el Arduino encendiendo/apagando ese LED.
 - **Movimiento:** motor paso a paso 28BYJ-48 + driver ULN2003 (desplazamiento celda a celda).
 - **Límites:** 2 limit switches para homing y extremos.
