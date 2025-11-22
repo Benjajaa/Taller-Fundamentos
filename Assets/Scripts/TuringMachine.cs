@@ -6,27 +6,28 @@ public class TuringMachine : MonoBehaviour
     public HeadController head;
     public TextMeshProUGUI stateLabel;
 
+    // --- NUEVO ---
+    public FollowHead followCamera;   // arrastrar CameraRig
+    public FreeCamera freeCamera;     // arrastrar CameraRig también
+    // --------------
+
     // false = suma, true = resta
     public bool subtractionMode = false;
 
-    // estado inicial (usa el mismo para suma y resta si quieres)
     public string initialState = "q0";
     public string currentState;
 
     [System.Serializable]
     public class Rule
     {
-        public string state;      // qi
-        public int readSymbol;    // simbolo leido (0,1,2,3)
-        public string newState;   // qj
-        public int writeSymbol;   // simbolo escrito
-        public int move;          // -1 = L, 0 = S, 1 = R
+        public string state;
+        public int readSymbol;
+        public string newState;
+        public int writeSymbol;
+        public int move;  // -1 = L, 0 = S, 1 = R
     }
 
-    // Reglas de SUMA (las que ya tienes funcionando)
     public Rule[] rules;
-
-    // Reglas de RESTA (las nuevas que hiciste con B,1,0,X)
     public Rule[] subtractionRules;
 
     void Start()
@@ -41,10 +42,13 @@ public class TuringMachine : MonoBehaviour
 
         string modo = subtractionMode ? "Resta" : "Suma";
         string runStatus = autoRunning ? "Running" : "Stopped";
+
         stateLabel.text = $"Estado: {currentState} ({modo}) [{runStatus}]";
     }
 
-
+    // -------------------------
+    // LOGICA PRINCIPAL DE PASOS
+    // -------------------------
     public void Step()
     {
         Rule[] activeRules = subtractionMode ? subtractionRules : rules;
@@ -52,7 +56,6 @@ public class TuringMachine : MonoBehaviour
 
         int s = head.Read();
 
-        // buscar regla δ(state, symbol)
         Rule ruleToApply = null;
         foreach (Rule r in activeRules)
         {
@@ -63,33 +66,33 @@ public class TuringMachine : MonoBehaviour
             }
         }
 
-        // si no hay regla, la máquina se detiene en este estado
         if (ruleToApply == null)
         {
-            Debug.Log("No hay regla para (" + currentState + ", " + s + "). La maquina se detiene.");
+            Debug.Log("No hay regla para (" + currentState + ", " + s + ").");
+            autoRunning = false;
+            UpdateStateLabel();
+            DisableFollowCamera();
             return;
         }
 
-        // 1) escribir simbolo
         head.Write(ruleToApply.writeSymbol);
 
-        // 2) mover cabezal
         if (ruleToApply.move == -1) head.MoveLeft();
         else if (ruleToApply.move == 1) head.MoveRight();
-        // 0 = quieto
 
-        // 3) cambiar estado
         currentState = ruleToApply.newState;
-
-        // 4) actualizar texto
         UpdateStateLabel();
     }
 
+    // -------------------------
+    // RESET
+    // -------------------------
     public void ResetMachine()
     {
-        // detener ejecución automática
         autoRunning = false;
         timer = 0f;
+
+        DisableFollowCamera();
 
         currentState = initialState;
         UpdateStateLabel();
@@ -97,9 +100,7 @@ public class TuringMachine : MonoBehaviour
         if (head != null && head.cells != null)
         {
             for (int i = 0; i < head.cells.Length; i++)
-            {
-                head.cells[i].Write(0); // B
-            }
+                head.cells[i].Write(0);
 
             head.index = 0;
             head.SnapToCurrent();
@@ -107,20 +108,32 @@ public class TuringMachine : MonoBehaviour
     }
 
 
+    // -------------------------
+    // MODO SUMA / RESTA
+    // -------------------------
     public void SetModeSum()
     {
         subtractionMode = false;
-        autoRunning = false;  // detener
+        autoRunning = false;
         timer = 0f;
 
+        DisableFollowCamera();
+
         ResetMachine();
+
+        // asegurar estado inicial otra vez
+        currentState = initialState;
+        UpdateStateLabel();
     }
+
 
     public void SetModeSubtraction()
     {
         subtractionMode = true;
-        autoRunning = false;  // detener
+        autoRunning = false;
         timer = 0f;
+
+        DisableFollowCamera();
 
         ResetMachine();
 
@@ -130,40 +143,67 @@ public class TuringMachine : MonoBehaviour
             head.index = 1;
             head.SnapToCurrent();
         }
+
+        // asegurar estado inicial
+        currentState = initialState;
+        UpdateStateLabel();
     }
 
-    // ---- MODO AUTO ----
+
+    // -------------------------
+    // AUTO RUN
+    // -------------------------
     [Header("Auto Run")]
     public bool autoRunning = false;
-    public float stepDelay = 0.5f; // segundos entre pasos
+    public float stepDelay = 0.5f;
     private float timer = 0f;
 
     void Update()
     {
-        // si estamos en modo automático
         if (autoRunning)
         {
             timer += Time.deltaTime;
             if (timer >= stepDelay)
             {
-                Step();       // ejecutar un paso
-                timer = 0f;   // reiniciar temporizador
+                Step();
+                timer = 0f;
             }
         }
     }
 
-    // iniciar o detener ejecución automática
     public void ToggleAutoRun()
     {
         autoRunning = !autoRunning;
         timer = 0f;
-        UpdateStateLabel(); // ← actualiza el texto inmediatamente
+        UpdateStateLabel();
+
+        if (autoRunning) EnableFollowCamera();
+        else DisableFollowCamera();
+    }
+
+    // -------------------------
+    // CAMARA
+    // -------------------------
+    void EnableFollowCamera()
+    {
+        if (followCamera != null)
+            followCamera.EnableFollow(true);
+
+        if (freeCamera != null)
+            freeCamera.SetFreeMode(false);
+    }
+
+    void DisableFollowCamera()
+    {
+        if (followCamera != null)
+            followCamera.EnableFollow(false);
+
+        if (freeCamera != null)
+            freeCamera.SetFreeMode(true);
     }
 
     public void SetSpeed(float value)
     {
-        // invertir para que valores altos signifiquen más velocidad
         stepDelay = Mathf.Lerp(0.05f, 1.0f, 1f - value);
     }
-
 }

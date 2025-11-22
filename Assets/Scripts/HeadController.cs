@@ -19,15 +19,15 @@ public class HeadController : MonoBehaviour
         SnapToCurrent(); // colocar el cabezal en la celda actual
     }
 
-    void Update()
+    void LateUpdate()
     {
-        // mover suavemente hacia la posicion objetivo
         transform.position = Vector3.MoveTowards(
             transform.position,
             targetPos,
             speed * Time.deltaTime
         );
     }
+
 
     public void SnapToCurrent()
     {
