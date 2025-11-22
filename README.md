@@ -11,7 +11,7 @@ Representación física de una **máquina de Turing** que ejecuta **suma (A+B)**
 - **Cabezal:** carrito con LDR que “lee” el LED actual; la “escritura” la realiza el Arduino encendiendo/apagando ese LED.
 - **Movimiento:** motor paso a paso 28BYJ-48 + driver ULN2003 (desplazamiento celda a celda).
 - **Límites:** 2 limit switches para homing y extremos.
-- **Interacción:** botones (Step, Reset, Modo Suma/Resta, Izq/Der) y LEDs de estado (q0, q1, q2, …).
+- **Interacción:** botones (Step, Reset, Modo Suma/Resta, Izq/Der).
 - **Alimentación:** 5 V externa (motor + LEDs), GND común.
 
 ## Representación formal utilizada
@@ -43,7 +43,7 @@ Representación física de una **máquina de Turing** que ejecuta **suma (A+B)**
 
 ## Fases del proyecto
 
-### Fase 1 — Informe teórico
+### Fase 1 — Informe teórico (31/08 - 11/09)
 
 - Análisis teórico
 - Definición del autómata: 7-tupla `M = (Q, Σ, Γ, δ, q₀, B, F)` y tablas de transición completas para **suma** y **resta (A≥B)**
@@ -53,11 +53,16 @@ Representación física de una **máquina de Turing** que ejecuta **suma (A+B)**
 - Investigación de máquina de Turing: **Benjamín Cuello**
 - Estados y 7-tupla: **Benjamín Salas**
 
-### Fase 2 — Selección de materiales y diseño del sistema
+### Fase 2 — Selección de materiales y diseño del sistema (11/09 - 30/09)
 
 - Selección y justificación de materiales y componentes.
 - Diseño de la arquitectura física: cinta, movimiento del cabezal, lectura/escritura.
 - Diagramas técnicos con dimensiones y funcionamiento de cada componente.
+
+**Encargados**
+
+- Diseño de la arquitectura física en tinkercad: **Benjamín Cuello**
+- Seleccion de Materiales y medidas: **Benjamín Salas**
 
 ### Fase 3 — Construcción, programación y pruebas
 
@@ -65,76 +70,128 @@ Representación física de una **máquina de Turing** que ejecuta **suma (A+B)**
 - Programación de la lógica .
 - Pruebas de funcionamiento y demostraciones controladas.
 
----- Actualizacion ----
+**Encargados**
 
-## Simulación Digital — Máquina de Turing en Unity
+- Construccion en Unity: **Benjamín Cuello**
+- Implementacion de logica y Diagrama en AUTOCAD: **Benjamín Salas**
 
-Esta es la **versión digital interactiva** de la Máquina de Turing, programada completamente en **Unity (2022.3 LTS)**.
-Esta simulación representa fielmente el funcionamiento del modelo físico, pero permite visualizar con mayor precisión los **estados, movimientos y escritura sobre la cinta**.
+---
+
+## Simulación Digital en Unity
+
+Esta simulación replica el prototipo físico: misma base de 30×30 cm, riel, fotoboards con LEDs, motor paso a paso con carrete y nylon, botones físicos, Arduino y cableado.
+
+Permite ver con claridad cómo el cabezal recorre la cinta, qué símbolo lee/escribe en cada paso y en qué estado `qi` se encuentra la máquina.
+
+---
 
 ### Interfaz y controles principales
 
 | Botón / Control  | Función                                                                                                         |
 | ---------------- | --------------------------------------------------------------------------------------------------------------- |
-| **Left / Right** | Mueve manualmente el cabezal una celda a la izquierda o derecha.                                                |
+| **Left / Right** | Mueven manualmente el cabezal una celda a la izquierda o derecha.                                              |
 | **Toggle**       | Cambia el símbolo de la celda actual (ciclo: `B` → `1` → `0` → `X` → `B`).                                      |
-| **Step**         | Ejecuta una única transición de estado (una “instrucción” de la tabla δ).                                       |
+| **Step**         | Ejecuta una única transición de estado (una instrucción de la tabla δ).                                        |
 | **Run / Stop**   | Inicia o detiene la ejecución automática continua.                                                              |
-| **Speed Slider** | Controla la velocidad de ejecución durante el modo automático (más rápido hacia la derecha).                    |
-| **Reset**        | Limpia toda la cinta (deja todas las celdas en blanco `B`) y vuelve el cabezal a la posición inicial.           |
-| **Suma / Resta** | Cambia entre las tablas de transición δ correspondientes a las operaciones de **suma (A+B)** o **resta (A−B)**. |
+| **Speed Slider** | Controla la velocidad de ejecución durante el modo automático .                                                 |
+| **Reset**        | Limpia toda la cinta (todas las celdas a `B`) y devuelve el cabezal a la posición inicial.                     |
+| **Suma / Resta** | Cambia entre las tablas de transición δ para **suma (A+B)** o **resta (A−B)**.                                  |
+
+Además de los botones de la interfaz, en la maqueta 3D hay **botones físicos**  que tienen la animacion cuando se presionan desde la UI, simulando la sensación de pulsar un botón real.
 
 ---
 
 ### Representación de la cinta
 
-- La **cinta** se compone de **23 celdas** (cubos), cada una representando un símbolo del alfabeto `{B, 1, 0, X}`.
-- El **color del cubo** indica el símbolo almacenado en esa celda:
+- La **cinta** se compone de **24 celdas** (LEDs), cada una representando un símbolo del alfabeto `{B, 1, 0, X}`.
 
-| Color    | Símbolo | Significado                                |
-| -------- | ------- | ------------------------------------------ |
-| Gris     | `B`     | Celda en blanco / sin valor.               |
-| Rojo     | `1`     | Unidad en unario (número).                 |
-| Azul     | `0`     | Separador (solo en resta).                 |
-| Naranjo  | `X`     | Celda tachada o restada (valor eliminado). |
-| Amarillo | —       | Cabezal de lectura/escritura.              |
+| Color    | Símbolo | Significado                                               |
+| -------- | ------- | ----------------------------------------------------------|
+| Gris     | `B`     | Celda en blanco / sin valor.                              |
+| Rojo     | `1`     | Unidad en unario (número).                                |
+| Azul     | `0`     | Separador (solo en resta).                                |
+| Naranjo  | `X`     | Celda tachada o restada (valor eliminado, solo en resta). |
 
----
 
-### Funcionamiento general
-
-1. Al iniciar, la máquina comienza en el estado inicial (`q0`) y con la cinta en blanco (`B...B`).
-2. El usuario puede escribir un número unario en la cinta usando **Toggle**, por ejemplo:
-   - Suma: `1110111B...` → representa `3 + 3`.
-   - Resta: `111011B...` → representa `3 − 2`.
-3. Al presionar **Step** o **Run**, el cabezal lee la celda actual, ejecuta la transición δ correspondiente (según la tabla cargada) y:
-   - Cambia de estado (`q0`, `q1`, `q2`, …).
-   - Escribe un nuevo símbolo (`1`, `X`, `B`, etc.).
-   - Se mueve izquierda/derecha según la regla.
-4. El proceso continúa hasta llegar al **estado final `qf`**, donde la máquina se detiene automáticamente.
-   - En suma: la cinta muestra la concatenación total de unos (`1`) equivalente a A+B.
-   - En resta: las celdas resultan en `B` si el resultado es 0, o `1`s equivalentes a A−B.
+El cabezal es un carrito que se desplaza sobre el riel. Debajo lleva el sensor LDR virtual y por encima se ve el nylon y el cable negro que se estiran cuando se mueve, igual que en la máquina física.
 
 ---
 
-### Indicadores visuales
+### Funcionamiento general de la máquina
 
-- En la parte superior izquierda se muestra el **estado actual**:
-  `Estado: q3 (Resta) [Running]`
-  - El texto entre paréntesis indica el modo activo (**Suma** o **Resta**).
-  - El estado entre corchetes indica si la ejecución está **Running** o **Stopped**.
-- El **cabezal** se desplaza visualmente entre las celdas, mostrando el proceso de lectura/escritura en tiempo real.
+1. Al iniciar la escena, el sistema parte en el estado inicial `q0` y la cinta está en blanco (`B...B`).
+2. El usuario escribe la entrada moviendo el cabezal con **Left / Right** y usando **Toggle** para cambiar el símbolo de la celda actual.
+3. Según el modo elegido (**Suma** o **Resta**), se carga la tabla de transición δ correspondiente.
+4. Con **Step** se ejecuta paso a paso: se lee el símbolo, se escribe el nuevo símbolo, se mueve el cabezal y se cambia el estado `qi`.
+5. Con **Run** la máquina recorre la entrada automáticamente hasta que no haya más reglas, momento en que se detiene.
+6. El resultado queda en la cinta:
+   - En suma, la cantidad total de `1` representa `A+B`.
+   - En resta, si el resultado es 0 la cinta queda en blanco; si no, la cantidad de `1` representa `A−B`.
+
+
+### Controles de cámara
+
+La cámara tiene dos modos:
+
+#### 1) Cámara libre (modo normal)
+
+- **Click derecho + mover mouse** → rotar la vista.
+- **W / A / S / D** → moverse adelante/atrás/izquierda/derecha.
+- **Q / E** → bajar/subir.
+- El movimiento está limitado a un area aproximada.
+
+#### 2) Cámara siguiendo al cabezal (solo en RUN)
+
+- Al presionar **Run**, la cámara pasa a un modo de seguimiento: se coloca sobre el cabezal y lo sigue mientras recorre la cinta.
+- Al presionar **Run / Stop** de nuevo, o cuando la máquina termina, se vuelve automáticamente al modo de cámara libre.
 
 ---
 
-### Lógica interna (Unity)
+### Lógica interna (scripts principales)
 
-- **`Cell.cs`**: representa cada celda de la cinta, guarda su símbolo y actualiza el color correspondiente.
-- **`HeadController.cs`**: gestiona el movimiento del cabezal y las operaciones de lectura/escritura.
-- **`TuringMachine.cs`**: contiene las tablas δ para **suma** y **resta**, el control del estado actual y el modo automático.
-- **`UIController.cs`**: conecta los botones y el texto del HUD (estado, botones, slider de velocidad, etc.).
+- **`Cell.cs`**  
+  Representa cada celda de la cinta. Almacena el símbolo (`B, 1, 0, X`) y actualiza el material (color) del LED.
+
+- **`HeadController.cs`**  
+  Controla el movimiento del cabezal entre las celdas y las operaciones de lectura/escritura.
+
+- **`TuringMachine.cs`**  
+  Implementa la máquina de Turing:
+  - Estados `qi` para suma y resta.
+  - Tablas de transición δ para ambos modos.
+  - Modo automático (Run/Stop).
+  - Actualización del texto de estado y control de la cámara.
+
+- **`UIController.cs`**  
+  Conecta los botones de la UI con la lógica de la máquina y acciona la animación de los botones físicos (Script `ButtonFisico`).
+
+- **`NylonController.cs`**  
+  Actualiza el carrete del motor y estira el nylon/cable cuando el cabezal se mueve.
+
+- **`FreeCamera.cs` y `FollowHead.cs`**  
+  Gestionan el movimiento libre de la cámara y el seguimiento del cabezal cuando la máquina está en ejecución.
 
 ---
-### Como usar
-- Para realizar una suma, por ejemplo 1 + 1, se debe presionar el boton suma, e ingresar con el cabezal la operacion, es decir, apretar toggle para que el cabezal encienda la led, e ir encendiendo las leds necesarias de color rojo (rojo = 1), teniendo en cuenta que el cabezal se mueve presionando los botones Right y Left, para marcar la separacion de la operacion, se deja el led entre los numeros de color Gris, es decir sin encender, entonces quedaria: Rojo|Gris|Rojo (Considera que esto se realiza al inicio de la cinta). Luego de ingresar todo, uno regresa con el cabezal al inicio del primer led Rojo, y puede apretar Run para que la maquina haga la operacion, o ir apretando Step consecuitivamente, para que el cabezal haga la operacion paso por paso.
-- Para realizar una resta, por ejemplo 2-1, se debe presionar el boton resta, con la diferencia de que ahora uno empieza a encender leds desde el segundo led, es decir, el primer led se deja de color gris para marcar los limites, quearia: Gris|Rojo|Rojo...., posteriormente se ingresar con el cabezal la operacion, es decir, apretar toggle para que el cabezal encienda la led, e ir encendiendo las leds necesarias de color rojo (rojo = 1), teniendo en cuenta que el cabezal se mueve presionando los botones Right y Left, en esta ocasion para marcar la separacion, se debera presionar la tecla toggle hasta que el led se encienda de color azul, posteriormente, se sigue rellenando con los 1s necesairos, quedaria en este caso: Gris|Rojo|Rojo|Azul|Rojo. Luego de ingresar todo, uno regresa con el cabezal al inicio del primer led Rojo, es decir el segundo led, puesto que el primer led se encuentra apagado (gris), y puede apretar Run para que la maquina haga la operacion, o ir apretando Step consecuitivamente, para que el cabezal haga la operacion paso por paso.
+
+### Cómo usar la simulación
+
+- **Suma (ej. 1 + 1):**
+  1. Presiona el botón **Suma**.
+  2. Desde el inicio de la cinta, enciende LEDs rojos con **Toggle** y muévete con **Left / Right** para escribir algo como:  
+     `Rojo | Gris | Rojo` (primer número, separador en gris, segundo número).
+  3. Vuelve con el cabezal al primer LED rojo.
+  4. Presiona **Run** para que la máquina haga toda la operación, o **Step** varias veces para ver cada transición.
+
+- **Resta (ej. 2 − 1):**
+  1. Presiona el botón **Resta**.
+  2. Deja el **primer LED apagado (gris)** como borde izquierdo.  
+  3. Escribe los `1` del minuendo en rojo, por ejemplo: `Gris | Rojo | Rojo | ...`
+  4. Para el separador, sigue usando **Toggle** hasta que el LED se ponga **azul**.
+  5. Luego escribe los `1` del sustraendo en rojo. Ejemplo completo:  
+     `Gris | Rojo | Rojo | Azul | Rojo`
+  6. Vuelve con el cabezal al primer LED rojo (el segundo LED, porque el primero es borde gris).
+  7. Presiona **Run** o **Step** para ver el proceso de resta.  
+     - Si el resultado es 0, la cinta queda en blanco (`B`).
+     - Si no, quedan `1` rojos equivalentes a `A−B`.
+
+
