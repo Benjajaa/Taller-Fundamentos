@@ -1,24 +1,27 @@
 using UnityEngine;
 
+// Controla el movimiento del cabezal y la lectura y escritura sobre las celdas de la cinta
 public class HeadController : MonoBehaviour
 {
-    // arreglo de celdas de la cinta en orden
-    public Cell[] cells;       // arrastrar Cell_0 hasta Cell_19
+    
+    public Cell[] cells;      
 
     // indice de la celda actual
-    public int index = 0;      // comienza en la primera celda
+    public int index = 0;     
 
     // velocidad de movimiento
-    public float speed = 5f;   // unidades por segundo
+    public float speed = 5f;   
 
-    // posicion objetivo del cabezal
+    
     Vector3 targetPos;
 
+    // Ubica el cabezal en la celda inicial al comenzar
     void Start()
     {
-        SnapToCurrent(); // colocar el cabezal en la celda actual
+        SnapToCurrent(); 
     }
 
+    // Mueve el cabezal hacia su posicion objetivo
     void LateUpdate()
     {
         transform.position = Vector3.MoveTowards(
@@ -28,10 +31,10 @@ public class HeadController : MonoBehaviour
         );
     }
 
-
+    // Coloca el cabezal directamente sobre la celda indicada por index
     public void SnapToCurrent()
     {
-        // colocar el cabezal directamente sobre la celda actual
+       
         if (cells == null || cells.Length == 0) return;
 
         Vector3 p = cells[index].transform.position;
@@ -39,18 +42,20 @@ public class HeadController : MonoBehaviour
         transform.position = targetPos;
     }
 
+    // Actualiza la posicion segun el indice actual
     void SetTargetFromIndex()
     {
-        // actualizar la posicion objetivo segun el indice
+      
         if (cells == null || cells.Length == 0) return;
 
         Vector3 p = cells[index].transform.position;
         targetPos = new Vector3(p.x, transform.position.y, transform.position.z);
     }
 
+
     public void MoveLeft()
     {
-        // mover una celda a la izquierda
+        
         if (index > 0)
         {
             index--;
@@ -60,7 +65,7 @@ public class HeadController : MonoBehaviour
 
     public void MoveRight()
     {
-        // mover una celda a la derecha
+       
         if (cells != null && index < cells.Length - 1)
         {
             index++;
@@ -70,13 +75,13 @@ public class HeadController : MonoBehaviour
 
     public int Read()
     {
-        // leer simbolo de la celda actual
+       
         return cells[index].Read();
     }
 
     public void Write(int symbol)
     {
-        // escribir simbolo en la celda actual
+     
         cells[index].Write(symbol);
     }
 }

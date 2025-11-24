@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+// Controla la camara libre permitiendo moverla con WASD y mirar con el mouse
 public class FreeCamera : MonoBehaviour
 {
     public float moveSpeed = 10f;
@@ -9,10 +10,11 @@ public class FreeCamera : MonoBehaviour
     [Header("Referencia al FollowHead del mismo rig")]
     public FollowHead followRig;
 
-    bool freeMode = true;   // empezamos en modo libre
+    bool freeMode = true;   
     float rotX;
     float rotY;
 
+    // Inicializa la rotacion inicial de la camara
     void Start()
     {
         Vector3 angles = transform.localEulerAngles;
@@ -20,17 +22,19 @@ public class FreeCamera : MonoBehaviour
         rotY = angles.x;
     }
 
+    // Activa o desactiva el modo de camara libre
     public void SetFreeMode(bool free)
     {
         freeMode = free;
     }
 
+    // Actualiza el movimiento y la rotacion de la camara libre
     void Update()
     {
-        // si NO estamos en modo libre, esta camara no toca nada
+        
         if (!freeMode) return;
 
-        // mirar con el mouse (botón derecho)
+       
         if (Input.GetMouseButton(1))
         {
             float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
@@ -43,13 +47,13 @@ public class FreeCamera : MonoBehaviour
             transform.localRotation = Quaternion.Euler(rotY, rotX, 0f);
         }
 
-        // mover con WASD + Q/E
+        
         float speed = moveSpeed;
         if (Input.GetKey(KeyCode.LeftShift))
             speed *= fastMultiplier;
 
-        float h = Input.GetAxis("Horizontal"); // A / D
-        float v = Input.GetAxis("Vertical");   // W / S
+        float h = Input.GetAxis("Horizontal"); 
+        float v = Input.GetAxis("Vertical");   
 
         float upDown = 0f;
         if (Input.GetKey(KeyCode.E)) upDown += 1f;
@@ -60,13 +64,7 @@ public class FreeCamera : MonoBehaviour
              transform.right * h +
              transform.up * upDown).normalized;
 
-        Vector3 newLocalPos = transform.localPosition + dir * speed * Time.deltaTime;
-
-        // limites (ajusta si quieres)
-        newLocalPos.x = Mathf.Clamp(newLocalPos.x, -15f, 15f);
-        newLocalPos.z = Mathf.Clamp(newLocalPos.z, -15f, 15f);
-        newLocalPos.y = Mathf.Clamp(newLocalPos.y, -2f, 5f);
-
-        transform.localPosition = newLocalPos;
+       
+        transform.localPosition += dir * speed * Time.deltaTime;
     }
 }

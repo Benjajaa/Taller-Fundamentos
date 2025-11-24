@@ -1,17 +1,17 @@
 ﻿using UnityEngine;
 using TMPro;
 
+// Controla la logica principal de la maquina de Turing 
+// incluyendo modos suma y resta, estados, movimiento y control de camaras
 public class TuringMachine : MonoBehaviour
 {
     public HeadController head;
     public TextMeshProUGUI stateLabel;
 
-    // --- NUEVO ---
-    public FollowHead followCamera;   // arrastrar CameraRig
-    public FreeCamera freeCamera;     // arrastrar CameraRig también
-    // --------------
 
-    // false = suma, true = resta
+    public FollowHead followCamera;   
+    public FreeCamera freeCamera;    
+
     public bool subtractionMode = false;
 
     public string initialState = "q0";
@@ -24,18 +24,20 @@ public class TuringMachine : MonoBehaviour
         public int readSymbol;
         public string newState;
         public int writeSymbol;
-        public int move;  // -1 = L, 0 = S, 1 = R
+        public int move; 
     }
 
     public Rule[] rules;
     public Rule[] subtractionRules;
 
+    // Inicializa estado y texto
     void Start()
     {
         currentState = initialState;
         UpdateStateLabel();
     }
 
+    // Actualiza el texto de estado en pantalla
     void UpdateStateLabel()
     {
         if (stateLabel == null) return;
@@ -46,9 +48,7 @@ public class TuringMachine : MonoBehaviour
         stateLabel.text = $"Estado: {currentState} ({modo}) [{runStatus}]";
     }
 
-    // -------------------------
-    // LOGICA PRINCIPAL DE PASOS
-    // -------------------------
+    // Ejecuta un paso de la maquina segun las reglas
     public void Step()
     {
         Rule[] activeRules = subtractionMode ? subtractionRules : rules;
@@ -84,9 +84,7 @@ public class TuringMachine : MonoBehaviour
         UpdateStateLabel();
     }
 
-    // -------------------------
-    // RESET
-    // -------------------------
+    // Reinicia la maquina a su estado inicial
     public void ResetMachine()
     {
         autoRunning = false;
@@ -108,9 +106,7 @@ public class TuringMachine : MonoBehaviour
     }
 
 
-    // -------------------------
-    // MODO SUMA / RESTA
-    // -------------------------
+    // Configura el modo suma
     public void SetModeSum()
     {
         subtractionMode = false;
@@ -121,12 +117,12 @@ public class TuringMachine : MonoBehaviour
 
         ResetMachine();
 
-        // asegurar estado inicial otra vez
+       
         currentState = initialState;
         UpdateStateLabel();
     }
 
-
+    // Configura el modo resta
     public void SetModeSubtraction()
     {
         subtractionMode = true;
@@ -137,27 +133,26 @@ public class TuringMachine : MonoBehaviour
 
         ResetMachine();
 
-        // mover el cabezal a la segunda celda
+       
         if (head != null)
         {
             head.index = 1;
             head.SnapToCurrent();
         }
 
-        // asegurar estado inicial
+    
         currentState = initialState;
         UpdateStateLabel();
     }
 
 
-    // -------------------------
-    // AUTO RUN
-    // -------------------------
+ 
     [Header("Auto Run")]
+
     public bool autoRunning = false;
     public float stepDelay = 0.5f;
     private float timer = 0f;
-
+    // Controla el modo automatico ejecutando pasos cada intervalo
     void Update()
     {
         if (autoRunning)
@@ -171,6 +166,7 @@ public class TuringMachine : MonoBehaviour
         }
     }
 
+    // Alterna la ejecucion automatica
     public void ToggleAutoRun()
     {
         autoRunning = !autoRunning;
@@ -181,9 +177,7 @@ public class TuringMachine : MonoBehaviour
         else DisableFollowCamera();
     }
 
-    // -------------------------
-    // CAMARA
-    // -------------------------
+    // Activa la camara que sigue al cabezal
     void EnableFollowCamera()
     {
         if (followCamera != null)
@@ -193,6 +187,7 @@ public class TuringMachine : MonoBehaviour
             freeCamera.SetFreeMode(false);
     }
 
+    // Desactiva la camara de seguimiento y activa la camara libre
     void DisableFollowCamera()
     {
         if (followCamera != null)
@@ -202,6 +197,7 @@ public class TuringMachine : MonoBehaviour
             freeCamera.SetFreeMode(true);
     }
 
+    // Cambia la velocidad del modo automatico
     public void SetSpeed(float value)
     {
         stepDelay = Mathf.Lerp(0.05f, 1.0f, 1f - value);

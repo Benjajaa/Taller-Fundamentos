@@ -1,9 +1,10 @@
 using UnityEngine;
 
+// Controla la camara que sigue al cabezal durante la ejecucion
 public class FollowHead : MonoBehaviour
 {
     public Transform target;
-    public Vector3 offset = new Vector3(0f, 5f, -2f);   // altura y distancia
+    public Vector3 offset = new Vector3(0f, 5f, -2f);   
     public float followSpeed = 5f;
 
     [Header("Limites en mundo")]
@@ -13,11 +14,12 @@ public class FollowHead : MonoBehaviour
     public float maxZ = 10f;
 
     [Header("Rotacion al seguir")]
-    public Vector3 followRotationEuler = new Vector3(80f, 0f, 0f); // vista cenital inclinada
+    public Vector3 followRotationEuler = new Vector3(80f, 0f, 0f); 
 
     [HideInInspector]
     public bool followEnabled = false;
 
+    // Activa o desactiva el seguimiento del cabezal
     public void EnableFollow(bool on)
     {
         followEnabled = on;
@@ -27,7 +29,7 @@ public class FollowHead : MonoBehaviour
             SnapNow();
         }
     }
-
+    // Posiciona la camara de inmediato sobre el cabezal
     public void SnapNow()
     {
         if (target == null) return;
@@ -40,6 +42,7 @@ public class FollowHead : MonoBehaviour
         transform.rotation = Quaternion.Euler(followRotationEuler);
     }
 
+    // Actualiza la posicion de la camara mientras sigue al cabezal
     void LateUpdate()
     {
         if (!followEnabled || target == null) return;
@@ -48,14 +51,14 @@ public class FollowHead : MonoBehaviour
         desired.x = Mathf.Clamp(desired.x, minX, maxX);
         desired.z = Mathf.Clamp(desired.z, minZ, maxZ);
 
-        // mover suave
+        
         transform.position = Vector3.Lerp(
             transform.position,
             desired,
             followSpeed * Time.deltaTime
         );
 
-        // siempre misma rotacion cuando seguimos
+        
         transform.rotation = Quaternion.Euler(followRotationEuler);
     }
 }

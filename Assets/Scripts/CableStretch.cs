@@ -1,11 +1,13 @@
 using UnityEngine;
 
+// Controla la extension visual del cable entre dos puntos
 public class CableStretch : MonoBehaviour
 {
-    public Transform startPoint;   // AnchorCableHead
-    public Transform endPoint;     // AnchorCableFixed
+    public Transform startPoint;   
+    public Transform endPoint;     
     public float thickness = 0.03f;
 
+    // Actualiza la posicion, rotacion y escala del cable
     void Update()
     {
         if (startPoint == null || endPoint == null) return;
@@ -18,13 +20,13 @@ public class CableStretch : MonoBehaviour
 
         if (length < 0.0001f) return;
 
-        // posición = punto medio
+        
         transform.position = (p0 + p1) / 2f;
 
-        // rotación = mirar hacia el punto fijo
+        
         transform.rotation = Quaternion.LookRotation(dir);
 
-        // escala = grosor + largo
+      
         Vector3 s = transform.localScale;
         s.x = thickness;
         s.y = thickness;

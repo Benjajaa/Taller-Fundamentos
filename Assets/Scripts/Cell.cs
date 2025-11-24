@@ -1,36 +1,40 @@
 ﻿using UnityEngine;
 
+// Representa una celda de la cinta y actualiza su material segun el simbolo 
 public class Cell : MonoBehaviour
 {
     public Renderer rend;
 
-    // 0 = B (apagado), 1 = 1, 2 = 0 (separador), 3 = X (tachado)
+    
     [Range(0, 3)]
     public int symbol = 0;
 
     public Material matB;      // B
     public Material matOne;    // 1
     public Material matZero;   // 0 (separador)
-    public Material matX;      // X (tachado)
+    public Material matX;      // X (Led Tachado)
 
+    // Actualiza el material inicial
     void Awake()
     {
-        // siempre usar el renderer del propio cubo
         rend = GetComponent<Renderer>();
         Refresh();
     }
 
+    // Lee el simbolo actual de la celda
     public int Read()
     {
         return symbol;
     }
 
+    // Escribe un simbolo en la celda y refresca su material
     public void Write(int s)
     {
         symbol = Mathf.Clamp(s, 0, 3);
         Refresh();
     }
 
+    // Actualiza el material segun el simbolo actual
     void Refresh()
     {
         if (!rend) return;
